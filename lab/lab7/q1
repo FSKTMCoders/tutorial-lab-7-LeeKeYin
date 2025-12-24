@@ -1,0 +1,48 @@
+import java.io.*; 
+import java.util.HashMap;
+import java.util.Scanner;
+public class L7Q1 {
+
+    public static void main(String[] args) {
+        storeCourseData();
+        retrieveCourseData();
+    }
+    private static void storeCourseData(){
+        HashMap<String, String> courses = new HashMap<>();
+        courses.put("WXES1116", "Programming I");
+        courses.put("WXES1115", "Data Structure");
+        courses.put("WXES1110", "Operating System");
+        courses.put("WXES1112", "Computing Mathematics I");
+        
+        try (ObjectOutputStream oos = new ObjectOutputStream(
+                new FileOutputStream("coursename.dat"))) {
+            oos.writeObject(courses);
+            System.out.println("Course data stored successfully in coursename.dat");
+        } catch (IOException e) {
+            System.out.println("Error storing course data: " + e.getMessage());
+        }
+    }
+    private static void retrieveCourseData() {
+        Scanner scanner = new Scanner(System.in);
+        
+        try (ObjectInputStream ois = new ObjectInputStream(
+                new FileInputStream("coursename.dat"))) {
+            
+            @SuppressWarnings("unchecked")
+            HashMap<String, String> courses = (HashMap<String, String>) ois.readObject();
+            
+            System.out.print("Enter course code: ");
+            String courseCode = scanner.nextLine().trim();
+            
+            if(courses.containsKey(courseCode)) {
+                System.out.println("Course Name: " + courses.get(courseCode));
+            }else {
+                System.out.println("Course code not found!");
+            }
+        }catch (IOException | ClassNotFoundException e) {
+            System.out.println("Error reading course data: " + e.getMessage());
+        }finally {
+            scanner.close();
+        }
+    }
+}
