@@ -1,0 +1,27 @@
+import java.util.Scanner;
+import java.net.URL;
+import java.io.*;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+public class L7Q2 {
+
+    public static void main(String[] args) {
+        try {
+            URL u = new URL("https://www.fsktm.um.edu.my");
+            URLConnection conn = u.openConnection();
+            InputStream stream = conn.getInputStream();
+            Scanner in = new Scanner(stream);
+            
+            try(PrintWriter writer = new PrintWriter("index.htm")) {
+                while (in.hasNextLine()){
+                    writer.println(in.nextLine());
+                }
+                System.out.println("Webpage content written to index.htm");
+            }
+            in.close();
+        }catch (IOException e) {
+            System.out.println("IO Error: " + e.getMessage());
+        }
+    }
+}
