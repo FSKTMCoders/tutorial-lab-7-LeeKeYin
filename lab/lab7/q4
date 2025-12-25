@@ -1,0 +1,42 @@
+import java.io.*;
+import java.util.Scanner;
+public class L7Q4 {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter filename: ");
+        String fileName = scanner.nextLine();
+        
+        try {
+            countFileStats(filename);
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }finally {
+            scanner.close();
+        }
+    }
+    private static void countFileStats(String filename) throws IOException {
+        int charCount = 0;
+        int wordCount = 0;
+        int lineCount = 0;
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lineCount++;
+                charCount += line.length();
+                
+                String[] words = line.split(" ");
+                wordCount += words.length;
+                
+                if(line.trim().isEmpty()) {
+                    wordCount--;
+                }
+            }
+        }
+        System.out.println("File Statistics: ");
+        System.out.println("Number of characters: " + charCount);
+        System.out.println("Number of words: " + wordCount);
+        System.out.println("Number of lines: " + lineCount);
+    }
+}
