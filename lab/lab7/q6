@@ -1,0 +1,125 @@
+import java.io.*;
+import java.util.*;
+
+class Product {
+    String productID;
+    String productName;
+    double productPrice;
+    
+    public Product(String productID, String productName, double productPrice) {
+        this.productID = productID;
+        this.productName = productName;
+        this.productPrice = productPrice;
+    }
+}
+
+class Order {
+    String orderID;
+    String productID;
+    int orderQuantity;
+    
+    public Order(String orderID, String productID, int orderQuantity) {
+        this.orderID = orderID;
+        this.productID = productID;
+        this.orderQuantity = orderQuantity;
+    }
+}
+
+public class Lab7Q6 {
+    public static void main(String[] args) {
+        // Create sample files
+        createSampleFiles();
+        
+        // Merge and display data
+        mergeAndDisplayData();
+    }
+    
+    private static void createSampleFiles() {
+        // Create product.txt
+        try (PrintWriter writer = new PrintWriter("product.txt")) {
+            writer.println("SK079,Dettol Natural,4.99");
+            writer.println("SK013,100 Plus,6.49");
+            writer.println("SK088,Jasmine Pearl,37.99");
+            writer.println("SK042,Ayamas Nuget Crispy,9.99");
+            writer.println("SK066,All Cafe,8.99");
+        } catch (IOException e) {
+            System.out.println("Error creating product.txt: " + e.getMessage());
+        }
+        
+        // Create order.txt
+        try (PrintWriter writer = new PrintWriter("order.txt")) {
+            writer.println("ORD001,SK079,20");
+            writer.println("ORD002,SK013,74");
+            writer.println("ORD003,SK088,27");
+            writer.println("ORD004,SK042,60");
+            writer.println("ORD005,SK066,79");
+        } catch (IOException e) {
+            System.out.println("Error creating order.txt: " + e.getMessage());
+        }
+    }
+    
+    private static void mergeAndDisplayData() {
+        HashMap<String, Product> products = new HashMap<>();
+        ArrayList<Order> orders = new ArrayList<>();
+        
+        // Read product.txt
+        try (BufferedReader reader = new BufferedReader(new FileReader("product.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 3) {
+                    String productID = parts[0].trim();
+                    String productName = parts[1].trim();
+                    double price = Double.parseDouble(parts[2].trim());
+                    products.put(productID, new Product(productID, productName, price));
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading product.txt: " + e.getMessage());
+            return;
+        }
+        
+        // Read order.txt
+        try (BufferedReader reader = new BufferedReader(new FileReader("order.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 3) {
+                    String orderID = parts[0].trim();
+                    String productID = parts[1].trim();
+                    int quantity = Integer.parseInt(parts[2].trim());
+                    orders.add(new Order(orderID, productID, quantity));
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading order.txt: " + e.getMessage());
+            return;
+        }
+        
+        // Display merged data
+        System.out.println("\nOrder Summary:");
+        System.out.println("=".repeat(80));
+        System.out.printf("%-12s %-25s %-12s %-15s %-12s\n", 
+            "ProductID", "ProductName", "Quantity", "PricePerUnit", "Total");
+        System.out.println("-".repeat(80));
+        
+        double grandTotal = 0;
+        for (Order order : orders) {
+            Product product = products.get(order.productID);
+            if (product != null) {
+                double totalPrice = order.orderQuantity * product.productPrice;
+                grandTotal += totalPrice;
+                
+                System.out.printf("%-12s %-25s %-12d %-15.2f RM%-10.2f\n",
+                    product.productID,
+                    product.productName,
+                    order.orderQuantity,
+                    product.productPrice,
+                    totalPrice);
+            }
+        }
+        
+        System.out.println("=".repeat(80));
+        System.out.printf("%67s RM%-10.2f\n", "Grand Total:", grandTotal);
+    }
+}
