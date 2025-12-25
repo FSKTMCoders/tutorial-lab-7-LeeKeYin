@@ -1,0 +1,31 @@
+import java.io.*;
+import java.util.Scanner;
+public class L7Q3 {
+    
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter input filename: ");
+        String inputFile = scanner.nextLine();
+        
+        try {
+            reverseFileLines(inputFile, "reverse.txt");
+            System.out.println("File reversed and saved to reverse.txt");
+        }catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }finally {
+            scanner.close();
+        }
+    }
+    private static void reverseFileLines(String inputFile, String outputFile) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            PrintWriter writer = new PrintWriter(new FileWriter(outputFile))){
+            
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String reversedLine = new StringBuilder(line).reverse().toString();
+                writer.println(reversedLine);
+            }
+        }
+    }
+}
